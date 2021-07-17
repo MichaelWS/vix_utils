@@ -140,7 +140,7 @@ async def get_vix_index_histories(data_directory):
 
             input_stream = io.StringIO(text)
             print(f"{cache_file_name}:  {text[0:500]}")
-            frame = pd.read_csv(input_stream, header=lines_to_discard)
+            frame = pd.read_csv(input_stream, header=lines_to_discard, on_bad_lines="warn")
             print(f"{cache_file_name} frame: \n{frame}")
             return frame
         # frames with the columns fixed
