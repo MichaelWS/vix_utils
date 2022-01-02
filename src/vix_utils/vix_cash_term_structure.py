@@ -52,25 +52,15 @@ async def get_vix_index_histories(data_directory):
     # the variious fix_..columns rename columns of to be consistent with "Close" and "Trade Date"
     # as the various data files from CBOE aren't consistent
     def fix_vvix_columns(df):
-        df = df.rename(columns={"VVIX": "Close", "Date": "Trade Date"})
-        return df
-
-    def fix_vix9d_columns(df):
-        df = df.rename(columns={"Date": "Trade Date"})
-        # Known bad date string in the data for april 20, 2011, looks like "*4/20/2011",
-        # at least as of november 11, 2020
-        td = df["Trade Date"]
-        m = td == "*4/20/2011"
-        # creates a pandas warning warning.  so there is likely a better way
-        td.loc[m] = "4/20/2011"
+        df.columns = ["Trade Date", "Close"]
         return df
 
     def fix_vix3m_columns(df):
         df.columns = ["Trade Date", "Open", "High", "Low", "Close"]
         return df
-
+    fix_vix9d_columns = fix_vix3m_columns
     fix_vix_columns = fix_vix3m_columns  # these are the same
-    fix_vix_6m_columns = fix_vix9d_columns  # these are the same
+    fix_vix_6m_columns = fix_vix3m_columns  # these are the same
 
     # fix_vix1y_columns not currently used because we  haven't developed a programmatic way to retrieve VIX1Y from CBOE
     def fix_vix1y_columns(df):
@@ -98,7 +88,7 @@ async def get_vix_index_histories(data_directory):
     index_history_symbols = ['VIX', 'VVIX', 'VIX9D', "VIX3M", "VIX6M", "GVZ"] + simple_data_symbols
 
     # various files from CBO have lines above the CSV data that need to be tossed.
-    num_lines_to_discard = [1, 1, 3, 2, 2, 1] + simple_data_lines_to_discard
+    num_lines_to_discard = [0, 0, 0, 0, 0, 0] + simple_data_lines_to_discard
     # the function to fixup the columns is passed in to the function that builds the data frame
     fixups = [fix_vix_columns, fix_vvix_columns, fix_vix9d_columns, fix_vix3m_columns,
               fix_vix_6m_columns, fix_one_value_column_result] + simple_data_fixups
@@ -113,7 +103,11 @@ async def get_vix_index_histories(data_directory):
         :return: the data frame, modified to have an index of Trade Date and a column "Symbol" with the symbol.
         """
         frame["Symbol"] = symbol
-        frame["Trade Date"] = pd.to_datetime(frame["Trade Date"])
+        if "Trade Date" not in frame.columns:
+            print(frame.head(), "MISSING TRADE DATE")
+            frame["Trade Date"] = pd.to_datetime(frame[frame.columns[0]])
+        else:
+            frame["Trade Date"] = pd.to_datetime(frame["Trade Date"])
         frame.set_index("Trade Date")
         return frame
 
