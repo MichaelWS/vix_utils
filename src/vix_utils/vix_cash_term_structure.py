@@ -8,14 +8,14 @@ import asyncio
 import io
 
 # https://ww2.cboe.com/publish/scheduledtask/mktdata/datahouse/vixcurrent.csv
-_vix_index_history = "https://ww2.cboe.com/publish/scheduledtask/mktdata/datahouse/vixcurrent.csv"
-_vvx_history = "https://ww2.cboe.com/publish/scheduledtask/mktdata/datahouse/vvixtimeseries.csv"
-_vix9d_history = "https://ww2.cboe.com/publish/scheduledtask/mktdata/datahouse/vix9ddailyprices.csv"
-_vix3m_history = "https://ww2.cboe.com/publish/scheduledtask/mktdata/datahouse/vix3mdailyprices.csv"
-_vix6m_history = "https://ww2.cboe.com/publish/scheduledtask/mktdata/datahouse/vix6mdailyprices.csv"
+_vix_index_history = "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"
+_vvx_history = "https://cdn.cboe.com/api/global/us_indices/daily_prices/VVIX_History.csv"
+_vix9d_history = "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX9D_History.csv"
+_vix3m_history = "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX3M_History.csv"
+_vix6m_history = "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX6M_History.csv"
 # this is kind of a fragile way to get it, but no data published as above
 
-_gvz_history = "https://ww2.cboe.com/publish/scheduledtask/mktdata/datahouse/gvzhistory.csv"
+_gvz_history = "https://cdn.cboe.com/api/global/us_indices/daily_prices/GVZ_History.csv"
 
 # todo add symbols OVX,VSLV,VXGDX,VXXLE,VXN
 
@@ -37,7 +37,7 @@ def _symbol_to_url(sym: str) -> str:
     You can find a variety of indexes using the CBOE global index search.
     https://ww2.cboe.com/index  and even more useful all on one page https://www.cboe.com/us/indices/indicesproducts/.
     """
-    return f"https://ww2.cboe.com//publish/scheduledtask/mktdata/datahouse/{sym}_History.csv"
+    return f"https://cdn.cboe.com/api/global/us_indices/daily_prices/{sym}_History.csv"
 
 
 _stu = _symbol_to_url           # save some typing
